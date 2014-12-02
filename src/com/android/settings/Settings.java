@@ -71,6 +71,8 @@ import com.android.settings.applications.ManageApplications;
 import com.android.settings.applications.ProcessStatsUi;
 import com.android.settings.bluetooth.BluetoothEnabler;
 import com.android.settings.bluetooth.BluetoothSettings;
+import com.android.settings.ethernet.EthernetEnabler;
+import com.android.settings.ethernet.EthernetSettings;
 import com.android.settings.deviceinfo.Memory;
 import com.android.settings.deviceinfo.UsbSettings;
 import com.android.settings.fuelgauge.PowerUsageSummary;
@@ -309,6 +311,7 @@ public class Settings extends PreferenceActivity
     private static final String[] ENTRY_FRAGMENTS = {
         WirelessSettings.class.getName(),
         WifiSettings.class.getName(),
+        EthernetSettings.class.getName(),
         AdvancedWifiSettings.class.getName(),
         BluetoothSettings.class.getName(),
         TetherSettings.class.getName(),
@@ -779,6 +782,7 @@ public class Settings extends PreferenceActivity
         private static final int HEADER_TYPE_COUNT = HEADER_TYPE_BUTTON + 1;
 
         private final WifiEnabler mWifiEnabler;
+        private final EthernetEnabler mEthernetEnabler;
         private final BluetoothEnabler mBluetoothEnabler;
         private AuthenticatorHelper mAuthHelper;
         private DevicePolicyManager mDevicePolicyManager;
@@ -797,7 +801,9 @@ public class Settings extends PreferenceActivity
         static int getHeaderType(Header header) {
             if (header.fragment == null && header.intent == null) {
                 return HEADER_TYPE_CATEGORY;
-            } else if (header.id == R.id.wifi_settings || header.id == R.id.bluetooth_settings) {
+            } else if (header.id == R.id.wifi_settings 
+            			|| header.id == R.id.bluetooth_settings
+            			|| header.id == R.id.ethernet_settings) {
                 return HEADER_TYPE_SWITCH;
             } else if (header.id == R.id.security_settings) {
                 return HEADER_TYPE_BUTTON;
@@ -842,6 +848,7 @@ public class Settings extends PreferenceActivity
             // Temp Switches provided as placeholder until the adapter replaces these with actual
             // Switches inflated from their layouts. Must be done before adapter is set in super
             mWifiEnabler = new WifiEnabler(context, new Switch(context));
+            mEthernetEnabler = new EthernetEnabler(context, new Switch(context));
             mBluetoothEnabler = new BluetoothEnabler(context, new Switch(context));
             mDevicePolicyManager = dpm;
         }
@@ -912,6 +919,8 @@ public class Settings extends PreferenceActivity
                     // Would need a different treatment if the main menu had more switches
                     if (header.id == R.id.wifi_settings) {
                         mWifiEnabler.setSwitch(holder.switch_);
+                    } else if (header.id == R.id.ethernet_settings) {
+                    	mEthernetEnabler.setSwitch(holder.switch_);
                     } else {
                         mBluetoothEnabler.setSwitch(holder.switch_);
                     }
@@ -986,11 +995,13 @@ public class Settings extends PreferenceActivity
 
         public void resume() {
             mWifiEnabler.resume();
+            mEthernetEnabler.resume();
             mBluetoothEnabler.resume();
         }
 
         public void pause() {
             mWifiEnabler.pause();
+            mEthernetEnabler.pause();
             mBluetoothEnabler.pause();
         }
     }
@@ -1069,6 +1080,9 @@ public class Settings extends PreferenceActivity
     public static class StorageSettingsActivity extends Settings { /* empty */ }
     public static class WifiSettingsActivity extends Settings { /* empty */ }
     public static class WifiP2pSettingsActivity extends Settings { /* empty */ }
+	
+	public static class EthernetSettingsActivity extends Settings { /* empty */ }
+
     public static class InputMethodAndLanguageSettingsActivity extends Settings { /* empty */ }
     public static class KeyboardLayoutPickerActivity extends Settings { /* empty */ }
     public static class InputMethodAndSubtypeEnablerActivity extends Settings { /* empty */ }
